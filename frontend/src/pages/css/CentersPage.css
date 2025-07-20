@@ -1,0 +1,83 @@
+/* CentersPage.css */
+.centers-page {
+  padding: 20px;
+}
+
+.centers-page .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.centers-page .page-header h1 {
+  color: #3498db;
+  margin: 0;
+  font-weight: 600;
+}
+
+.centers-page .add-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.centers-page .add-button .icon {
+  font-size: 1.2rem;
+}
+
+.centers-page .view-tabs .nav-link {
+  font-weight: 500;
+}
+
+.centers-page .view-tabs .tab-content {
+  padding-top: 20px;
+}
+
+.centers-page .loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+}
+
+.centers-page .center-card {
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.centers-page .center-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.centers-page .center-card .card-header {
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  font-weight: 600;
+}
+
+.centers-page .detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.centers-page .detail-item .icon {
+  margin-right: 10px;
+  color: #3498db;
+}
+
+.centers-page .detail-item .label {
+  font-weight: 500;
+  min-width: 80px;
+  display: inline-block;
+}
+
+.centers-page .map-container {
+  height: 600px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}

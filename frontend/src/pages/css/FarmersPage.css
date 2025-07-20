@@ -1,0 +1,81 @@
+/* FarmersPage.css */
+.farmers-page {
+  padding: 20px;
+}
+
+.farmers-page .page-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.farmers-page .page-header h1 {
+  color: #3498db;
+  margin: 0;
+  font-weight: 600;
+}
+
+.farmers-page .controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.farmers-page .search-box {
+  width: 300px;
+}
+
+.farmers-page .add-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.farmers-page .add-button .icon {
+  font-size: 1.2rem;
+}
+
+.farmers-page .loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+}
+
+.farmers-page .table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.farmers-page .actions-cell {
+  text-align: center;
+  width: 50px;
+}
+
+.farmers-page .dropdown-toggle {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  background: transparent;
+}
+
+.farmers-page .dropdown-toggle::after {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .farmers-page .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .farmers-page .controls {
+    flex-direction: column;
+  }
+  
+  .farmers-page .search-box {
+    width: 100%;
+  }
+}
