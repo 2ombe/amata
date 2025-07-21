@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema( {
     isFarmer:{type:Boolean,default:false},
     isCollrctionCenter:{type:Boolean,default:false},
     isSupplier:{type:Boolean,default:false},
+    isAdmin:{type:String, default:false},
     isProccessor:{type:Boolean,default:false},
     phone: { type: String, required: true },
     contactPerson:{type:String},

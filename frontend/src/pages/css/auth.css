@@ -1,0 +1,125 @@
+/* auth.module.css */
+.authContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.authFormContainer {
+  width: 100%;
+  max-width: 480px;
+  margin: auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.authHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.authHeader h2 {
+  font-size: 1.75rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.authHeader p {
+  color: #718096;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.formControl {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.formControl:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.16);
+}
+
+.selectControl {
+  composes: formControl;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px;
+}
+
+.btnPrimary {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4299e1;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnPrimary:hover {
+  background-color: #3182ce;
+}
+
+.errorMessage {
+  padding: 0.75rem;
+  margin-bottom: 1.5rem;
+  background-color: #fff5f5;
+  color: #e53e3e;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.roleBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  margin-left: 0.5rem;
+}
+
+.roleBadge.admin {
+  background-color: #ebf8ff;
+  color: #3182ce;
+}
+
+.roleBadge.farmer {
+  background-color: #f0fff4;
+  color: #38a169;
+}
+
+.roleBadge.collectionCenter {
+  background-color: #fffaf0;
+  color: #dd6b20;
+}
+
+.roleBadge.supplier {
+  background-color: #faf5ff;
+  color: #805ad5;
+}
+
+.roleBadge.processor {
+  background-color: #fff5f5;
+  color: #e53e3e;
+}

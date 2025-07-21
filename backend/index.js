@@ -14,6 +14,7 @@ const milkBatchRoutes = require('./routes/milkBatchRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
 const processingPlantRoutes = require('./routes/processingPlantRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
+const userRoutes = require('./routes/User')
 const app = express();
 
 // Middleware
@@ -31,6 +32,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/milkflow'
 
 // API Routes
 app.use('/api/milk', milkRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/collections', collectionRoutes);
 app.use('/api/farmers', farmerRoutes);
 app.use('/api/centers', centerRoutes);

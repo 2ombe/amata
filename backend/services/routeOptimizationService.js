@@ -1,5 +1,5 @@
 // services/routeOptimizationService.js
-const vrp = require('node-vrp');
+// const vrp = require('node-vrp');
 
 async function calculateOptimalRoute(stops, supplier) {
   // Prepare distance matrix
