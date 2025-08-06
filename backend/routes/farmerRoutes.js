@@ -4,6 +4,7 @@ const router = express.Router();
 const Farmer = require('../model/farmerSchema');
 const User = require('../model/user');
 const collectionCenter = require('../model/collectionCenter');
+const { isAuth } = require('../middleware/auth');
 
 // Get all farmers with search
 router.get('/', async (req, res) => {
@@ -30,12 +31,12 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new farmer
-router.post('/', async (req, res) => {
+router.post('/',isAuth, async (req, res) => {
+
+  
   try {
-    // 1. Check if farmer phone already exists as a user
     let user = await User.findOne({ phone: req.body.phone });
     
-    // 2. If user doesn't exist, create a new farmer user
     if (!user) {
       user = new User({
         name: req.body.name,
@@ -50,7 +51,6 @@ router.post('/', async (req, res) => {
       await user.save();
     }
 
-    // 3. Create the farmer record
     const farmer = new Farmer({
       farmerId: `FARM-${Date.now().toString().slice(-6)}`,
       name: req.body.name,
@@ -60,17 +60,17 @@ router.post('/', async (req, res) => {
       location: {
         village: req.body.village
       },
-      collectionCenter: req.user._id, // The collection center creating this farmer
+      collectionCenter: req.user._id,
       paymentDetails: {
         provider: req.body.paymentMethod,
         accountNumber: req.body.phone
       },
-      user: user._id // Reference to the user account
+      user: user._id 
     });
 
     const newFarmer = await farmer.save();
 
-    // 4. Update the collection center's assignedFarmers array
+
     await collectionCenter.findByIdAndUpdate(
       req.user._id,
       { $addToSet: { assignedFarmers: newFarmer._id } },

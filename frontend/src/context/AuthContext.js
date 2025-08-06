@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -7,23 +7,45 @@ const AuthContext = createContext();
 const initialState = {
   user: null,
   loading: false,
-  error: null
+  error: null,
+  isAuthenticated: false
 };
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN_REQUEST':
     case 'REGISTER_REQUEST':
-      return { ...state, loading: true };
+      return { ...state, loading: true, error: null };
     case 'LOGIN_SUCCESS':
     case 'REGISTER_SUCCESS':
-      return { ...state, loading: false, user: action.payload };
+      return { 
+        ...state, 
+        loading: false, 
+        user: action.payload,
+        isAuthenticated: true,
+        error: null 
+      };
+    case 'AUTH_SUCCESS':
+      return {
+        ...state,
+        user: action.payload,
+        isAuthenticated: true,
+        loading: false
+      };
     case 'LOGIN_FAIL':
     case 'REGISTER_FAIL':
+    case 'AUTH_FAIL':
+      return { 
+        ...state, 
+        loading: false, 
+        error: action.payload,
+        isAuthenticated: false 
+      };
     case 'LOGOUT':
-      return { ...state, loading: false, user: null, error: action.payload };
-    case 'LOAD_USER':
-      return { ...state, user: action.payload, loading: false };
+      return { 
+        ...initialState,
+        isAuthenticated: false 
+      };
     default:
       return state;
   }
@@ -31,69 +53,64 @@ const authReducer = (state, action) => {
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const navigate = useNavigate();
 
-  // Load user from localStorage on initial render
   useEffect(() => {
-    const loadUser = async () => {
+    const checkAuth = async () => {
+      dispatch({ type: 'LOGIN_REQUEST' });
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const res = await api.get('/users/profile', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          dispatch({ type: 'LOAD_USER', payload: res.data });
+          const res = await api.get('/users/profile');
+          dispatch({ type: 'AUTH_SUCCESS', payload: res.data });
+        } else {
+          dispatch({ type: 'AUTH_FAIL', payload: 'Not authenticated' });
         }
       } catch (error) {
         localStorage.removeItem('token');
-        console.error('Failed to load user:', error);
+        dispatch({ type: 'AUTH_FAIL', payload: error.response?.data?.message || 'Authentication failed' });
       }
     };
-    loadUser();
+    checkAuth();
   }, []);
 
-  // Login user
-   const login = async (email, password) => {
-    dispatch({ type: 'LOGIN_REQUEST' });
-    try {
-      const res = await api.post('/users/login', { email, password });
-      localStorage.setItem('token', res.data.token);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
-      return res.data;
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
-      dispatch({ type: 'LOGIN_FAIL', payload: errorMessage });
-      throw new Error(errorMessage);
-    }
-  };
 
-  // Register user
-  const register = async (userData) => {
-    dispatch({ type: 'REGISTER_REQUEST' });
-    try {
-      const res = await api.post('/users/register', userData);
-      localStorage.setItem('token', res.data.token);
-      dispatch({ type: 'REGISTER_SUCCESS', payload: res.data });
-    } catch (error) {
-      dispatch({ type: 'REGISTER_FAIL', payload: error.response?.data?.message || 'Registration failed' });
-    }
-  };
+const login = async (email, password) => {
+  dispatch({ type: 'LOGIN_REQUEST' });
+  try {
+    const res = await api.post('/users/login', { email, password });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    dispatch({ 
+      type: 'LOGIN_SUCCESS', 
+      payload: res.data.user 
+    });
+    return true; 
+  } catch (error) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    dispatch({ 
+      type: 'LOGIN_FAIL', 
+      payload: error.response?.data?.message || 'Login failed' 
+    });
+    return false;
+  }
+};
 
-  // Logout user
   const logout = () => {
     localStorage.removeItem('token');
-    dispatch({ type: 'LOGOUT', payload: null });
+    dispatch({ type: 'LOGOUT' });
+    navigate('/login');
   };
 
-   return (
+  return (
     <AuthContext.Provider
       value={{
         user: state.user,
         loading: state.loading,
         error: state.error,
+        isAuthenticated: state.isAuthenticated,
         login,
-        register,
         logout
       }}
     >

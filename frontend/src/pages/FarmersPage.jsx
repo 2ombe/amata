@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   Container, Table, Button, Spinner, Alert, 
   InputGroup, FormControl, Dropdown, Modal, Form, 
@@ -7,6 +7,7 @@ import {
 import { Search, ThreeDotsVertical, PersonPlus } from 'react-bootstrap-icons';
 import api from '../services/api';
 import './css/FarmersPage.css';
+import { useAuth } from '../context/AuthContext';
 
 const FarmersPage = () => {
   const [farmers, setFarmers] = useState([]);
@@ -20,12 +21,16 @@ const FarmersPage = () => {
     village: '',
     paymentMethod: 'mobile_money'
   });
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchFarmers = async () => {
       try {
         const response = await api.get('/farmers', {
-          params: { search: searchTerm }
+          params: { search: searchTerm },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         });
         setFarmers(response.data);
       } catch (err) {
@@ -39,10 +44,17 @@ const FarmersPage = () => {
     fetchFarmers();
   }, [searchTerm]);
 
+
   const handleAddFarmer = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/farmers', newFarmer);
+      const response = await api.post('/farmers', newFarmer, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'X-User-Id': user?._id,
+          'X-User-Role': user?.role
+        }
+      });
       setFarmers(prev => [...prev, response.data]);
       setShowAddModal(false);
       setNewFarmer({
