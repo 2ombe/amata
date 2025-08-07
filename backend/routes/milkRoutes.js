@@ -8,9 +8,10 @@ const {
   recordPlantDelivery
 } = require('../services/milkTrackingService');
 const { generateOptimalRoutes } = require('../services/routeOptimizationService');
+const { isAuth } = require('../middleware/auth');
 
 // Record milk collection from farmer
-router.post('/collections', async (req, res) => {
+router.post('/collections',isAuth, async (req, res) => {
   try {
     const { farmerId, quantity, qualityMetrics } = req.body;
     const batch = await recordCollection(farmerId, quantity, qualityMetrics);

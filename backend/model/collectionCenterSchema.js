@@ -55,5 +55,6 @@ const collectionsSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+module.exports = mongoose.model ("CollectedMilk", collectionsSchema)
 // collectionSchema.index({ 'route.waypoints.location': '2dsphere' });
 // collectionSchema.index({ center: 1, plannedDate: 1 });

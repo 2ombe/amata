@@ -11,16 +11,16 @@ router.get('/', async (req, res) => {
   try {
     const { search = '' } = req.query;
     
-    const query = {};
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { 'contact.phone': { $regex: search, $options: 'i' } },
-        { 'location.village': { $regex: search, $options: 'i' } }
-      ];
-    }
+    // const query = {};
+    // if (search) {
+    //   query.$or = [
+    //     { name: { $regex: search, $options: 'i' } },
+    //     { 'contact.phone': { $regex: search, $options: 'i' } },
+    //     { 'location.village': { $regex: search, $options: 'i' } }
+    //   ];
+    // }
 
-    const farmers = await Farmer.find(query)
+    const farmers = await Farmer.find({})
       .populate('collectionCenter', 'name')
       .sort({ name: 1 });
 

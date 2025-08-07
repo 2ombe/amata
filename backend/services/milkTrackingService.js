@@ -1,8 +1,5 @@
-// milkTrackingService.js
-
-/**
- * Records milk collection from farmer to collection center
- */
+const Farmer = require('../model/farmerSchema')
+const MilkBatch = require('../model/milkBatchSchema')
 async function recordCollection(farmerId, quantity, qualityMetrics) {
   const farmer = await Farmer.findById(farmerId);
   if (!farmer) throw new Error('Farmer not found');
