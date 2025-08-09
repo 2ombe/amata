@@ -24,10 +24,8 @@ const CollectionsPage = () => {
     totalItems: 0
   });
   const [farmers, setFarmers] = useState([]);
-  const [centers, setCenters] = useState([]);
   const [formData, setFormData] = useState({
     farmer: '',
-    collectionCenter: '',
     quantity: '',
     qualityMetrics: {
       fatContent: '',
@@ -43,52 +41,118 @@ const CollectionsPage = () => {
   const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
-const fetchCollections = async () => {
-  try {
-    setLoading(true);
-    const params = {
-      page: pagination.currentPage,
-      limit: pagination.itemsPerPage,
-      search: searchTerm,
-      ...filters
-    };
-    
-    const response = await api.get('/collections', { params });
-    
-    // Ensure collections is always an array
-    const collectionsData = Array.isArray(response.data?.items) 
-      ? response.data.items 
-      : [];
-    
-    setCollections(collectionsData);
-    setPagination(prev => ({
-      ...prev,
-      totalItems: response.data?.total || 0
-    }));
-  } catch (error) {
-    console.error('Error fetching collections:', error);
-    setCollections([]); // Set to empty array on error
-  } finally {
-    setLoading(false);
-  }
-};
-
-    const fetchFarmersAndCenters = async () => {
+    const fetchCollections = async () => {
       try {
-        const [farmersRes] = await Promise.all([
-          api.get('/farmers')
-          
-        ]);
-        setFarmers(farmersRes.data);
-      
+        setLoading(true);
+        const params = {
+          page: pagination.currentPage,
+          limit: pagination.itemsPerPage,
+          search: searchTerm,
+          ...filters
+        };
+        
+        const response = await api.get('/collections', { 
+          params,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        setCollections(Array.isArray(response.data) ? response.data : []);
+        setPagination(prev => ({
+          ...prev,
+          totalItems: response.headers['x-total-count'] || response.data.length || 0
+        }));
       } catch (error) {
-        console.error('Error fetching farmers or centers:', error);
+        console.error('Error fetching collections:', error);
+        setCollections([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchFarmers = async () => {
+      try {
+        const response = await api.get('/farmers', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setFarmers(response.data);
+      } catch (error) {
+        console.error('Error fetching farmers:', error);
       }
     };
 
     fetchCollections();
-    fetchFarmersAndCenters();
+    fetchFarmers();
   }, [pagination.currentPage, searchTerm, filters]);
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log("Submit button clicked"); // Debug log
+  
+  const isValid = validateForm();
+  console.log("Form validation result:", isValid); // Debug log
+  if (!isValid) {
+    console.log("Form validation errors:", formErrors); // Debug log
+    return;
+  }
+
+  console.log("Preparing to submit form"); // Debug log
+  setSubmitLoading(true);
+  setSubmitError('');
+
+  try {
+    const payload = {
+      farmerId: formData.farmer,
+      quantity: parseFloat(formData.quantity),
+      pricePerLiter: parseFloat(formData.pricePerLiter),
+      qualityMetrics: {
+        fatContent: formData.qualityMetrics.fatContent ? parseFloat(formData.qualityMetrics.fatContent) : undefined,
+        acidity: formData.qualityMetrics.acidity ? parseFloat(formData.qualityMetrics.acidity) : undefined,
+        temperatureAtCollection: formData.qualityMetrics.temperatureAtCollection ? 
+          parseFloat(formData.qualityMetrics.temperatureAtCollection) : undefined,
+        lactometerReading: formData.qualityMetrics.lactometerReading ? 
+          parseFloat(formData.qualityMetrics.lactometerReading) : undefined,
+        adulterationTest: formData.qualityMetrics.adulterationTest
+      }
+    };
+    console.log("Payload to be sent:", payload); // Debug log
+
+    const response = await api.post('/collections', payload, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    console.log("API response:", response); // Debug log
+
+    setCollections(prev => [response.data, ...prev]);
+    setShowModal(false);
+    resetForm();
+  } catch (error) {
+    console.error('Error creating collection:', error);
+    setSubmitError(error.response?.data?.message || 'Failed to create collection');
+  } finally {
+    setSubmitLoading(false);
+  }
+};
+
+  const resetForm = () => {
+    setFormData({
+      farmer: '',
+      quantity: '',
+      qualityMetrics: {
+        fatContent: '',
+        acidity: '',
+        temperatureAtCollection: '',
+        lactometerReading: '',
+        adulterationTest: false
+      },
+      pricePerLiter: ''
+    });
+    setFormErrors({});
+  };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -137,63 +201,13 @@ const fetchCollections = async () => {
   const validateForm = () => {
     const errors = {};
     if (!formData.farmer) errors.farmer = 'Farmer is required';
-    if (!formData.collectionCenter) errors.collectionCenter = 'Collection center is required';
     if (!formData.pricePerLiter || isNaN(formData.pricePerLiter)) errors.pricePerLiter = 'Valid price is required';
     
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    setSubmitLoading(true);
-    setSubmitError('');
-
-    try {
-      const payload = {
-        ...formData,
-        quantity: parseFloat(formData.quantity),
-        pricePerLiter: parseFloat(formData.pricePerLiter),
-        qualityMetrics: {
-          ...formData.qualityMetrics,
-          fatContent: formData.qualityMetrics.fatContent ? parseFloat(formData.qualityMetrics.fatContent) : undefined,
-          acidity: formData.qualityMetrics.acidity ? parseFloat(formData.qualityMetrics.acidity) : undefined,
-          temperatureAtCollection: formData.qualityMetrics.temperatureAtCollection ? 
-            parseFloat(formData.qualityMetrics.temperatureAtCollection) : undefined,
-          lactometerReading: formData.qualityMetrics.lactometerReading ? 
-            parseFloat(formData.qualityMetrics.lactometerReading) : undefined
-        }
-      };
-
-      const response = await api.post('/collections', payload,
-        {headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }}
-      );
-      setCollections(prev => [response.data, ...prev]);
-      setShowModal(false);
-      setFormData({
-        farmer: '',
-        collectionCenter: '',
-        quantity: '',
-        qualityMetrics: {
-          fatContent: '',
-          acidity: '',
-          temperatureAtCollection: '',
-          lactometerReading: '',
-          adulterationTest: false
-        },
-        pricePerLiter: ''
-      });
-    } catch (error) {
-      setSubmitError(error.response?.data?.message || 'Failed to create collection');
-      console.error('Error creating collection:', error);
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
+  
 
   return (
     <Container fluid className="collections-page">
@@ -234,7 +248,7 @@ const fetchCollections = async () => {
                 onChange={(e) => handleFilterChange('center', e.target.value)}
               >
                 <option value="">All Centers</option>
-                {centers.map(center => (
+                {collections.map(center => (
                   <option key={center._id} value={center._id}>
                     {center.name}
                   </option>
@@ -313,47 +327,28 @@ const fetchCollections = async () => {
               {submitError && <Alert variant="danger">{submitError}</Alert>}
               <Form onSubmit={handleSubmit}>
                 <Row className="mb-3">
-                  <Col md={6}>
-                    <FloatingLabel controlId="farmer" label="Farmer" className="mb-3">
-                      <Form.Select
-                        name="farmer"
-                        value={formData.farmer}
-                        onChange={handleInputChange}
-                        isInvalid={!!formErrors.farmer}
-                      >
-                        <option value="">Select Farmer</option>
-                        {farmers.map(farmer => (
-                          <option key={farmer._id} value={farmer._id}>
-                            {farmer.name} ({farmer.farmerId})
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Form.Control.Feedback type="invalid">
-                        {formErrors.farmer}
-                      </Form.Control.Feedback>
-                    </FloatingLabel>
-                  </Col>
-                  {/* <Col md={6}>
-                    <FloatingLabel controlId="collectionCenter" label="Collection Center" className="mb-3">
-                      <Form.Select
-                        name="collectionCenter"
-                        value={formData.collectionCenter}
-                        onChange={handleInputChange}
-                        isInvalid={!!formErrors.collectionCenter}
-                      >
-                        <option value="">Select Collection Center</option>
-                        {centers.map(center => (
-                          <option key={center._id} value={center._id}>
-                            {center.name}
-                          </option>
-                        ))}
-                      </Form.Select>
-                      <Form.Control.Feedback type="invalid">
-                        {formErrors.collectionCenter}
-                      </Form.Control.Feedback>
-                    </FloatingLabel>
-                  </Col> */}
-                </Row>
+              <Col md={6}>
+                <FloatingLabel controlId="farmer" label="Farmer" className="mb-3">
+                  <Form.Select
+                    name="farmer"
+                    value={formData.farmer}
+                    onChange={handleInputChange}
+                    isInvalid={!!formErrors.farmer}
+                    required
+                  >
+                    <option value="">Select Farmer</option>
+                    {farmers.map(farmer => (
+                      <option key={farmer._id} value={farmer._id}>
+                        {farmer.name} ({farmer.farmerId})
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {formErrors.farmer}
+                  </Form.Control.Feedback>
+                </FloatingLabel>
+              </Col>
+            </Row>
 
                 <Row className="mb-3">
                   <Col md={6}>
@@ -458,24 +453,27 @@ const fetchCollections = async () => {
 
                 <div className="d-flex justify-content-end mt-4">
                   <Button 
-                    variant="secondary" 
-                    onClick={() => setShowModal(false)} 
-                    className="me-2"
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    variant="primary" 
-                    type="submit"
-                    disabled={submitLoading}
-                  >
-                    {submitLoading ? (
-                      <>
-                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                        <span className="ms-2">Saving...</span>
-                      </>
-                    ) : 'Save Collection'}
-                  </Button>
+                variant="secondary" 
+                onClick={() => {
+                  setShowModal(false);
+                  resetForm();
+                }} 
+                className="me-2"
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="primary" 
+                type="submit"
+                disabled={submitLoading}
+              >
+                {submitLoading ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                    <span className="ms-2">Saving...</span>
+                  </>
+                ) : 'Save Collection'}
+              </Button>
                 </div>
               </Form>
             </Modal.Body>

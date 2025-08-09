@@ -2,11 +2,16 @@
 const express = require('express');
 const router = express.Router();
 const Collection = require('../model/collectionCenterSchema');
+const MilkBatch = require('../model/milkBatchSchema')
 const { calculateRemainingShelfLife } = require('../services/milkBatchService');
+const { isAuth } = require('../middleware/auth');
 // Create collection with optimized batches
-router.post('/', async (req, res) => {
+router.post('/',isAuth, async (req, res) => {
   try {
-    const { centerId, farmerIds } = req.body;
+    const { centerId, farmerIds,farmerId } = req.body;
+   
+  console.log(req.user);
+  
     
     // Get all milk batches at this center needing collection
     const batches = await MilkBatch.find({
@@ -29,7 +34,7 @@ router.post('/', async (req, res) => {
       plannedDate: new Date(),
       batches: batches.map(b => ({
         batchId: b._id,
-        farmer: b.farmer,
+        farmer: farmerId,
         quantity: b.quantity,
         qualityMetrics: b.qualityMetrics
       })),
@@ -47,6 +52,8 @@ router.post('/', async (req, res) => {
     res.status(201).json(newCollection);
   } catch (err) {
     res.status(400).json({ message: err.message });
+    console.log({ message: err.message });
+    
   }
 });
 

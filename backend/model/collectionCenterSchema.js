@@ -1,11 +1,7 @@
 const mongoose = require("mongoose")
 const collectionsSchema = new mongoose.Schema({
   collectionId: { type: String, unique: true, required: true },
-  center: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'CollectionCenter',
-    required: true 
-  },
+ 
   plannedDate: { type: Date, required: true },
   actualDate: Date,
   status: { 
@@ -16,6 +12,11 @@ const collectionsSchema = new mongoose.Schema({
   batches: [{
     batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'MilkBatch' },
     farmer: { type: mongoose.Schema.Types.ObjectId, ref: 'Farmer' },
+     center: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'CollectionCenter',
+    required: true 
+  },
     quantity: Number,
     quality: {
       fatContent: Number,
