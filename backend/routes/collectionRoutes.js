@@ -2,58 +2,106 @@
 const express = require('express');
 const router = express.Router();
 const Collection = require('../model/collectionCenterSchema');
-const MilkBatch = require('../model/milkBatchSchema')
-const { calculateRemainingShelfLife } = require('../services/milkBatchService');
+const mongoose = require("mongoose")
 const { isAuth } = require('../middleware/auth');
-// Create collection with optimized batches
-router.post('/',isAuth, async (req, res) => {
+const User = require('../model/user');
+const MilkBatchScena = require('../model/milkBatchStateMachine');
+
+router.post('/', isAuth, async (req, res) => {
   try {
-    const { centerId, farmerIds,farmerId } = req.body;
-   
-  console.log(req.user);
-  
+    const { farmerId, quantity, pricePerLiter, qualityMetrics } = req.body;
     
-    // Get all milk batches at this center needing collection
-    const batches = await MilkBatch.find({
-      collectionCenter: centerId,
-      status: 'at_center',
-      expiryTime: { $gt: new Date() }
-    });
+    // Get the collection center associated with the current user
+    const userWithCenter = await User.findById(req.user).populate('center');
+    const centerId = userWithCenter.center._id;
     
-    // Sort by remaining shelf life (most urgent first)
-    batches.sort((a, b) => {
-      const aShelfLife = calculateRemainingShelfLife(a);
-      const bShelfLife = calculateRemainingShelfLife(b);
-      return aShelfLife - bShelfLife;
-    });
+    // Find or create the current milk batch for this center
+    let currentBatch = await MilkBatchScena.findOne({ 
+      centerId: centerId,
+      currentStatus: 'collected'
+    }).sort({ collectedAt: -1 });
     
-    // Create collection with optimized batch order
+    // If no active batch exists or the last one is older than 24 hours, create new
+    if (!currentBatch || (Date.now() - currentBatch.collectedAt > 24 * 60 * 60 * 1000)) {
+      currentBatch = new MilkBatchScena({
+        batchNumber: `BATCH-${Date.now().toString().slice(-6)}`,
+        totalQuantity: 0,
+        totalCost: 0,
+        centerId: centerId,
+        overAllQualityMatrics: {
+          fatContent: 0,
+          acidity: 0,
+          temperatureAtCollection: 0,
+          lactometerReading: 0,
+          adulterationTest: false
+        }
+      });
+    }
+    
+    // Calculate new total quantity and cost
+    const newQuantity = currentBatch.totalQuantity + quantity;
+    const newCost = currentBatch.totalCost + (quantity * pricePerLiter);
+    
+    // Calculate weighted average for quality metrics
+    const weight = quantity / newQuantity;
+    const oldWeight = currentBatch.totalQuantity / newQuantity;
+    
+    // Update quality metrics
+    currentBatch.overAllQualityMatrics = {
+      fatContent: (currentBatch.overAllQualityMatrics.fatContent * oldWeight) + (qualityMetrics.fatContent * weight),
+      acidity: (currentBatch.overAllQualityMatrics.acidity * oldWeight) + (qualityMetrics.acidity * weight),
+      temperatureAtCollection: (currentBatch.overAllQualityMatrics.temperatureAtCollection * oldWeight) + (qualityMetrics.temperatureAtCollection * weight),
+      lactometerReading: (currentBatch.overAllQualityMatrics.lactometerReading * oldWeight) + (qualityMetrics.lactometerReading * weight),
+      adulterationTest: currentBatch.overAllQualityMatrics.adulterationTest || qualityMetrics.adulterationTest
+    };
+    
+    // Update batch totals
+    currentBatch.totalQuantity = newQuantity;
+    currentBatch.totalCost = newCost;
+    
+    // Create the collection record
     const collection = new Collection({
-      collectionId: `COL-${Date.now().toString().slice(-6)}`,
-      center: centerId,
-      plannedDate: new Date(),
-      batches: batches.map(b => ({
-        batchId: b._id,
-        farmer: farmerId,
-        quantity: b.quantity,
-        qualityMetrics: b.qualityMetrics
-      })),
-      status: 'pending'
+      batchId: currentBatch.batchNumber,
+      farmerId: farmerId,
+      collectionCenter: centerId,
+      quantity: quantity,
+      collectionTime: new Date(),
+      pricePerLiter: pricePerLiter,
+      qualityMetrics: qualityMetrics,
+      currentStatus: 'collected',
+      currentHandler: {
+        type: 'center_staff',
+        userId: req.user,
+        model: 'User'
+      }
     });
     
-    const newCollection = await collection.save();
+    // Save both records in a transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
     
-    // Update batches status
-    await MilkBatch.updateMany(
-      { _id: { $in: batches.map(b => b._id) } },
-      { $set: { status: 'awaiting_transport' } }
-    );
+    try {
+      await currentBatch.save({ session });
+      const newCollection = await collection.save({ session });
+      await session.commitTransaction();
+      
+      res.status(201).json({
+        collection: newCollection,
+        updatedBatch: currentBatch
+      });
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
     
-    res.status(201).json(newCollection);
   } catch (err) {
-    res.status(400).json({ message: err.message });
-    console.log({ message: err.message });
-    
+    res.status(400).json({ 
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+    console.error('Collection error:', err);
   }
 });
 
@@ -93,9 +141,9 @@ router.post('/:id/optimize-route', async (req, res) => {
 });
 
 // Get all collections with pagination
-router.get('/', async (req, res) => {
+router.get('/search', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', status, center } = req.query;
+    const { page = 1, limit = 10, search = '', status, collectionCenter} = req.query;
     
     const query = {};
     if (search) {
@@ -127,38 +175,27 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get a single collection
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const collection = await Collection.findById(req.params.id)
-      .populate('center', 'name location contactPerson')
-      .populate('vehicle', 'plateNumber driver')
-      .populate('batches.farmer', 'name farmerId contact');
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    if (!collection) {
-      return res.status(404).json({ message: 'Collection not found' });
-    }
-    res.json(collection);
+    const collections = await Collection.find({})
+      .populate('collectionCenter', 'name location contactPerson')
+      .populate('farmerId', 'name contact')
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Collection.countDocuments();
+
+    res.set('X-Total-Count', total);
+    res.json(collections);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Create a new collection
-router.post('/', async (req, res) => {
-  const collection = new Collection({
-    collectionId: `COL-${Date.now()}`,
-    center: req.body.center,
-    plannedDate: req.body.plannedDate,
-    status: 'pending'
-  });
 
-  try {
-    const newCollection = await collection.save();
-    res.status(201).json(newCollection);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
 
 module.exports = router;

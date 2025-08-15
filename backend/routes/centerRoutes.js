@@ -3,7 +3,9 @@ const express = require('express');
 const router = express.Router();
 const User = require('../model/user');
 const CollectionCenter = require('../model/collectionCenter');
-
+const bcrypt = require('bcryptjs');
+const { isAuth } = require('../middleware/auth');
+const saltRounds = 10; 
 // Get all collection centers
 router.get('/', async (req, res) => {
   try {
@@ -17,27 +19,31 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new collection center
-router.post('/', async (req, res) => {
+router.post('/',isAuth, async (req, res) => {
   try {
     // Check if owner already exists
-    let owner = await User.findOne({ email: req.body.centerEmail });
-    
-    // If owner doesn't exist, create one
-    if (!owner) {
-      owner = new User({
-        name: req.body.name,
-        email: req.body.centerEmail,
-        password: '1515', // Default password
-        phone: req.body.contactPhone,
-        contactPerson: req.body.contactPerson,
-        isCollrctionCenter: true,
-        isFarmer: false,
-        isSupplier: false,
-        isProccessor: false
-      });
-      
-      await owner.save();
-    }
+   let owner = await User.findOne({ email: req.body.centerEmail });
+
+// If owner doesn't exist, create one
+if (!owner) {
+  // Hash the password before saving
+  const hashedPassword = await bcrypt.hash('1515', saltRounds);
+  
+  owner = new User({
+    name: req.body.name,
+    email: req.body.centerEmail,
+    password: hashedPassword, // Store the hashed password
+    phone: req.body.contactPhone,
+    contactPerson: req.body.contactPerson,
+    isCollrctionCenter: true,
+    isFarmer: false,
+    isSupplier: false,
+    isProccessor: false,
+    center: req.body._id
+  });
+  
+  await owner.save();
+}
 
     // Create the collection center
     const center = new CollectionCenter({

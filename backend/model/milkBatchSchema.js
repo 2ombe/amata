@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const { Schema } = mongoose;
 const milkBatchSchema = new Schema({
   batchId: { type: String, unique: true, required: true },
-  farmer: { 
+  farmerId: { 
     type: Schema.Types.ObjectId, 
     ref: 'Farmer',
     required: true 
@@ -31,24 +31,24 @@ const milkBatchSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, refPath: 'currentHandler.model' },
     model: { type: String, enum: ['Farmer', 'User', 'Supplier'] }
   },
-  route: {
-    stops: [{
-      location: { 
-        type: { type: String, default: 'Point' },
-        coordinates: [Number]
-      },
-      type: { type: String, enum: ['collection', 'transfer', 'sale', 'processing'] },
-      timestamp: Date,
-      handler: { type: Schema.Types.ObjectId, ref: 'User' }
-    }]
-  },
-  destination: {
-    type: { type: String, enum: ['local_sale', 'processing_plant', 'soured_milk'] },
-    plantId: { type: Schema.Types.ObjectId, ref: 'ProcessingPlant' },
-    retailerId: { type: Schema.Types.ObjectId, ref: 'Retailer' }
-  },
-  expiryTime: { type: Date },
-  pricePerLiter: { type: Number },
+  // route: {
+  //   stops: [{
+  //     location: { 
+  //       type: { type: String, default: 'Point' },
+  //       coordinates: [Number]
+  //     },
+  //     type: { type: String, enum: ['collection', 'transfer', 'sale', 'processing'] },
+  //     timestamp: Date,
+  //     handler: { type: Schema.Types.ObjectId, ref: 'User' }
+  //   }]
+  // },
+  // destination: {
+  //   type: { type: String, enum: ['local_sale', 'processing_plant', 'soured_milk'] },
+  //   plantId: { type: Schema.Types.ObjectId, ref: 'ProcessingPlant' },
+  //   retailerId: { type: Schema.Types.ObjectId, ref: 'Retailer' }
+  // },
+  // expiryTime: { type: Date },
+  // pricePerLiter: { type: Number },
   paymentStatus: { 
     type: String, 
     enum: ['pending', 'paid', 'partially_paid'], 
@@ -56,8 +56,8 @@ const milkBatchSchema = new Schema({
   }
 }, { timestamps: true });
 
-milkBatchSchema.index({ 'route.stops.location': '2dsphere' });
-milkBatchSchema.index({ expiryTime: 1 });
-milkBatchSchema.index({ currentStatus: 1 });
+// milkBatchSchema.index({ 'route.stops.location': '2dsphere' });
+// milkBatchSchema.index({ expiryTime: 1 });
+// milkBatchSchema.index({ currentStatus: 1 });
 
 module.exports = mongoose.model('MilkBatch', milkBatchSchema);

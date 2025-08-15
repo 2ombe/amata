@@ -238,7 +238,7 @@ const CollectionsPage = () => {
                 onChange={(e) => handleFilterChange('status', e.target.value)}
               >
                 <option value="">All Statuses</option>
-                <option value="pending">Pending</option>
+                <option value="collected">collected</option>
                 <option value="in_progress">In Progress</option>
                 <option value="completed">Completed</option>
               </Form.Select>
