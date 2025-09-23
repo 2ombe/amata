@@ -41,11 +41,11 @@ app.use('/api/suppliers', supplierRoutes);
 app.use('/api/plants', processingPlantRoutes);
 app.use('/api/transactions', transactionRoutes);
 // Serve static files in production
-// app.use(express.static(path.join(__dirname, "frontend/build")));
+app.use(express.static(path.join(__dirname, "frontend/build")));
 
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "frontend/build", "index.html"));
-// });
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/build", "index.html"));
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
