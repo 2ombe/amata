@@ -23,10 +23,10 @@ ChartJS.register(
 const MilkVolumeChart = ({ data }) => {
   // Default data if none provided
   const chartData = {
-    labels: data?.labels || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    labels: data?.labels || ['Kuwa 1', 'Kuwa 2', 'Kuwa 3', 'Kuwa 4', 'Kuwa 5', 'Kuwa 6', 'Kucyumweru'],
     datasets: [
       {
-        label: 'Milk Collected (L)',
+        label: 'Amata Yakusanyijwe (L)',
         data: data?.values || [1200, 1900, 1500, 2000, 1800, 2100, 1700],
         backgroundColor: 'rgba(52, 152, 219, 0.7)',
         borderColor: 'rgba(52, 152, 219, 1)',
@@ -43,7 +43,7 @@ const MilkVolumeChart = ({ data }) => {
       },
       title: {
         display: true,
-        text: 'Daily Milk Collection Volume',
+        text: 'Ingano Ikusanywa Buri Munsi',
       },
     },
     scales: {
@@ -51,7 +51,7 @@ const MilkVolumeChart = ({ data }) => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Liters',
+          text: 'Litiro',
         },
       },
     },

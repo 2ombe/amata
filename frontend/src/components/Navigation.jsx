@@ -10,7 +10,7 @@ const Navigation = () => {
     <Navbar bg="primary" variant="dark" expand="lg">
       <Container>
         <LinkContainer to="/">
-          <Navbar.Brand>MilkFlow Rwanda</Navbar.Brand>
+          <Navbar.Brand>Amata</Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
@@ -18,19 +18,19 @@ const Navigation = () => {
             {isAuthenticated ? (
               <>
                 <LinkContainer to="/collections">
-                  <Nav.Link>Collections</Nav.Link>
+                  <Nav.Link>Umusaruro</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/farmers">
-                  <Nav.Link>Farmers</Nav.Link>
+                  <Nav.Link>Aborozi</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/centers">
-                  <Nav.Link>Collection Centers</Nav.Link>
+                  <Nav.Link>Amakusanyirizo</Nav.Link>
                 </LinkContainer>
-                <Nav.Link onClick={logout}>Logout</Nav.Link>
+                <Nav.Link onClick={logout}>Sohoka</Nav.Link>
               </>
             ) : (
               <LinkContainer to="/login">
-                <Nav.Link>Login</Nav.Link>
+                <Nav.Link>Injira</Nav.Link>
               </LinkContainer>
             )}
           </Nav>

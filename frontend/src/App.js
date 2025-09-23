@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import { div } from 'react-bootstrap';
 import { AuthProvider } from './context/AuthContext';
 import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
@@ -13,20 +13,20 @@ import RegisterForm from './pages/RegisterForm';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 import Unauthorized from './components/Unauthorized';
+import WelcomePage from './pages/WelcomePage';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
         <Navigation />
-        <Container fluid="md" className="py-4">
+        <div fluid="md" className="py-4">
           <Routes>
+              <Route path="/" element={<WelcomePage/>} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
-            
-            {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/dasbboard" element={<HomePage />} />
               <Route path="/collections" element={<CollectionsPage />} />
               <Route path="/collections/:id" element={<CollectionDetailPage />} />
               <Route path="/farmers" element={<FarmersPage />} />
@@ -38,7 +38,7 @@ function App() {
               <Route path="/register" element={<RegisterForm />} />
             </Route>
           </Routes>
-        </Container>
+        </div>
       </AuthProvider>
     </Router>
   );

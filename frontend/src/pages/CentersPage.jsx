@@ -72,13 +72,13 @@ const CentersPage = () => {
   return (
     <Container fluid className="centers-page">
       <div className="page-header">
-        <h1>Collection Centers</h1>
+        <h1>Amakusanyirizo</h1>
         <Button 
           variant="primary" 
           onClick={() => setShowAddModal(true)}
           className="add-button"
         >
-          <Plus className="icon" /> Add Center
+          <Plus className="icon" /> Ongeraho Ikusanyirizo
         </Button>
       </div>
 
@@ -115,12 +115,12 @@ const CentersPage = () => {
                           <span>{center.location?.village}</span>
                         </div>
                         <div className="detail-item">
-                          <span className="label">Contact:</span>
+                          <span className="label">Telefone:</span>
                           {center.contactPerson} ({center.contactPhone})
                         </div>
                         <div className="detail-item">
-                          <span className="label">Capacity:</span>
-                          {center.storageCapacity}L
+                          <span className="label">Ubushobozi bwo kwakira:</span>
+                          {center.storageCapacity}Litiro
                         </div>
                         <div className="detail-item">
                           <span className="label">Cooling:</span>
@@ -132,7 +132,7 @@ const CentersPage = () => {
                         size="sm"
                         href={`/centers/${center._id}`}
                       >
-                        View Details
+                        Amakuru
                       </Button>
                     </Card.Body>
                   </Card>
@@ -149,14 +149,14 @@ const CentersPage = () => {
       {/* Add Center Modal */}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Add New Collection Center</Modal.Title>
+          <Modal.Title>Andika Ikusanyirizo rishya</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleAddCenter}>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Center Name</Form.Label>
+                  <Form.Label>Izina Ryikusanyirizo</Form.Label>
                   <Form.Control
                     type="text"
                     name="name"
@@ -168,7 +168,7 @@ const CentersPage = () => {
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Village</Form.Label>
+                  <Form.Label>Aho Riherereye</Form.Label>
                   <Form.Control
                     type="text"
                     name="village"
@@ -183,7 +183,7 @@ const CentersPage = () => {
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Contact Person</Form.Label>
+                  <Form.Label>Urishyizwe(Umuyobozi)</Form.Label>
                   <Form.Control
                     type="text"
                     name="contactPerson"
@@ -195,7 +195,7 @@ const CentersPage = () => {
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Contact Phone</Form.Label>
+                  <Form.Label>Nimero ya Telephone</Form.Label>
                   <Form.Control
                     type="tel"
                     name="contactPhone"
@@ -211,7 +211,7 @@ const CentersPage = () => {
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Storage Capacity (Liters)</Form.Label>
+                  <Form.Label>Ubushobozi (Mu malitiro)</Form.Label>
                   <Form.Control
                     type="number"
                     name="storageCapacity"
@@ -249,7 +249,7 @@ const CentersPage = () => {
             </Row>
 
             <Button variant="primary" type="submit">
-              Save Collection Center
+              Emeza amakuru
             </Button>
           </Form>
         </Modal.Body>

@@ -76,7 +76,7 @@ const FarmersPage = () => {
   return (
     <Container fluid className="farmers-page">
       <div className="page-header">
-        <h1>Farmers Management</h1>
+        <h1>Urupapuro Rwumworozi</h1>
         <div className="controls">
           <InputGroup className="search-box">
             <InputGroup.Text>
@@ -93,7 +93,7 @@ const FarmersPage = () => {
             onClick={() => setShowAddModal(true)}
             className="add-button"
           >
-            <PersonPlus className="icon" /> Add Farmer
+            <PersonPlus className="icon" /> Andika Umworozi Mushya
           </Button>
         </div>
       </div>
@@ -110,12 +110,12 @@ const FarmersPage = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Village</th>
-                <th>Contact</th>
-                <th>Avg. Production</th>
-                <th>Payment Method</th>
-                <th>Actions</th>
+                <th>Amazina</th>
+                <th>Aho aturuka</th>
+                <th>Telephone</th>
+                <th>Umusaruro</th>
+                <th>Uko yishyurwa</th>
+                <th>Ibikurikira</th>
               </tr>
             </thead>
             <tbody>
@@ -137,9 +137,9 @@ const FarmersPage = () => {
                         <ThreeDotsVertical />
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item href={`/farmers/${farmer._id}`}>View</Dropdown.Item>
-                        <Dropdown.Item>Edit</Dropdown.Item>
-                        <Dropdown.Item className="text-danger">Delete</Dropdown.Item>
+                        <Dropdown.Item href={`/farmers/${farmer._id}`}>Reba Amakuru</Dropdown.Item>
+                        <Dropdown.Item>Vugurura</Dropdown.Item>
+                        <Dropdown.Item className="text-danger">Siba amakuru</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </td>
@@ -153,12 +153,12 @@ const FarmersPage = () => {
       {/* Add Farmer Modal */}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Add New Farmer</Modal.Title>
+          <Modal.Title>Andika umworozi mushya</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleAddFarmer}>
             <Form.Group className="mb-3">
-              <Form.Label>Full Name</Form.Label>
+              <Form.Label>Amazina yombi</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
@@ -169,7 +169,7 @@ const FarmersPage = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Phone Number</Form.Label>
+              <Form.Label>Nimero yatelefone</Form.Label>
               <Form.Control
                 type="tel"
                 name="phone"
@@ -180,7 +180,7 @@ const FarmersPage = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Village</Form.Label>
+              <Form.Label>Agace avamo</Form.Label>
               <Form.Control
                 type="text"
                 name="village"
@@ -191,20 +191,20 @@ const FarmersPage = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Payment Method</Form.Label>
+              <Form.Label>Uburyo bwokwishyurwa</Form.Label>
               <Form.Select
                 name="paymentMethod"
                 value={newFarmer.paymentMethod}
                 onChange={handleInputChange}
               >
                 <option value="mobile_money">Mobile Money</option>
-                <option value="cash">Cash</option>
-                <option value="bank">Bank Transfer</option>
+                <option value="cash">Muntoki</option>
+                <option value="bank">Banki</option>
               </Form.Select>
             </Form.Group>
 
             <Button variant="primary" type="submit">
-              Save Farmer
+              Andika Umworozi
             </Button>
           </Form>
         </Modal.Body>

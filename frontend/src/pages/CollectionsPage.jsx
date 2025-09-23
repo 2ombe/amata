@@ -214,9 +214,9 @@ const CollectionsPage = () => {
       <Row>
         <Col>
           <div className="page-header">
-            <h1>Milk Collections</h1>
+            <h1>Ikusanyirizo</h1>
             <Button variant="primary" onClick={() => setShowModal(true)}>
-              New Collection
+              Umusaruro Wakiriwe
             </Button>
           </div>
 
@@ -237,17 +237,17 @@ const CollectionsPage = () => {
                 value={filters.status}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
               >
-                <option value="">All Statuses</option>
-                <option value="collected">collected</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
+                <option value="">Ubwiza bw' amata</option>
+                <option value="collected">Ayakiriwe</option>
+                <option value="in_progress">Ayagize ikibazo</option>
+              
               </Form.Select>
 
               <Form.Select
                 value={filters.center}
                 onChange={(e) => handleFilterChange('center', e.target.value)}
               >
-                <option value="">All Centers</option>
+                <option value="">Amakusanyirizo yose</option>
                 {collections.map(center => (
                   <option key={center._id} value={center._id}>
                     {center.name}
@@ -303,16 +303,16 @@ const CollectionsPage = () => {
           </Pagination>
           
           <div className="page-info">
-            Showing {(pagination.currentPage - 1) * pagination.itemsPerPage + 1} to{' '}
+            Umusaruro{(pagination.currentPage - 1) * pagination.itemsPerPage + 1} to{' '}
             {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} of{' '}
-            {pagination.totalItems} collections
+            {pagination.totalItems} Wakusanyijwe
           </div>
         </div>
       )}
     </>
   ) : (
     <Alert variant="info" className="mt-3">
-      No collections found. Create your first collection by clicking "New Collection".
+      Nta musaruro Murakira. Gushyiramo umusaruro mwakiriye kanda Ahanditse "Umusaruro Wakiriwe"
     </Alert>
   )}
 </>
@@ -321,7 +321,7 @@ const CollectionsPage = () => {
           {/* New Collection Modal */}
           <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
             <Modal.Header closeButton>
-              <Modal.Title>New Milk Collection</Modal.Title>
+              <Modal.Title>Umusaruro Wakiriwe</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               {submitError && <Alert variant="danger">{submitError}</Alert>}
@@ -336,7 +336,7 @@ const CollectionsPage = () => {
                     isInvalid={!!formErrors.farmer}
                     required
                   >
-                    <option value="">Select Farmer</option>
+                    <option value="">Hitamo Umworozi</option>
                     {farmers.map(farmer => (
                       <option key={farmer._id} value={farmer._id}>
                         {farmer.name} ({farmer.farmerId})
@@ -385,7 +385,7 @@ const CollectionsPage = () => {
                   </Col>
                 </Row>
 
-                <h5 className="mt-4 mb-3">Quality Metrics</h5>
+                <h5 className="mt-4 mb-3">Ubwiza bwamata</h5>
                 <Row className="mb-3">
                   <Col md={4}>
                     <FloatingLabel controlId="fatContent" label="Fat Content (%)">
@@ -460,7 +460,7 @@ const CollectionsPage = () => {
                 }} 
                 className="me-2"
               >
-                Cancel
+                Hagarika
               </Button>
               <Button 
                 variant="primary" 
@@ -470,7 +470,7 @@ const CollectionsPage = () => {
                 {submitLoading ? (
                   <>
                     <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                    <span className="ms-2">Saving...</span>
+                    <span className="ms-2">Tegereza...</span>
                   </>
                 ) : 'Save Collection'}
               </Button>

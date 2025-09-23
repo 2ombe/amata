@@ -25,10 +25,10 @@ ChartJS.register(
 const SpoilageTrendChart = ({ data }) => {
   // Default data if none provided
   const chartData = {
-    labels: data?.labels || ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    labels: data?.labels || ['Icyumweru 1', 'Icyumweru 2', 'Icyumweru 3', 'Icyumweru 4'],
     datasets: [
       {
-        label: 'Spoilage Rate (%)',
+        label: 'Ijanisha Ryayangiritse (%)',
         data: data?.values || [5.2, 4.8, 3.9, 3.2],
         borderColor: 'rgba(231, 76, 60, 0.8)',
         backgroundColor: 'rgba(231, 76, 60, 0.2)',
@@ -46,7 +46,7 @@ const SpoilageTrendChart = ({ data }) => {
       },
       title: {
         display: true,
-        text: 'Weekly Milk Spoilage Trend',
+        text: 'Amata yangiritse icyi cyumweru',
       },
     },
     scales: {
@@ -55,7 +55,7 @@ const SpoilageTrendChart = ({ data }) => {
         max: 10,
         title: {
           display: true,
-          text: 'Percentage (%)',
+          text: 'Ijanisha (%)',
         },
       },
     },

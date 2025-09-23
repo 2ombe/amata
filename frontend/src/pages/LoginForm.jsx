@@ -23,7 +23,7 @@ const handleSubmit = async (e) => {
   try {
     const success = await login(email, password);
     if (success) { 
-      navigate('/', { replace: true }); 
+      navigate('/dasbboard', { replace: true }); 
     } else {
       setLocalError('Login failed. Please check your credentials.');
     }
@@ -35,7 +35,7 @@ const handleSubmit = async (e) => {
   return (
     <div className="container mt-5" style={{ maxWidth: '500px' }}>
       <Form onSubmit={handleSubmit} className="p-4 border rounded shadow-sm bg-white">
-        <h2 className="mb-4 text-center">Login</h2>
+        <h2 className="mb-4 text-center">Aho kwinjirira</h2>
         
         {(error || localError) && (
           <Alert variant="danger" className="text-center">
@@ -44,7 +44,7 @@ const handleSubmit = async (e) => {
         )}
         
         <Form.Group className="mb-3">
-          <Form.Label>Email</Form.Label>
+          <Form.Label>Inziza Emeli</Form.Label>
           <Form.Control
             type="email"
             value={email}
@@ -56,7 +56,7 @@ const handleSubmit = async (e) => {
         </Form.Group>
         
         <Form.Group className="mb-3">
-          <Form.Label>Password</Form.Label>
+          <Form.Label>Injiza ijambo banga</Form.Label>
           <Form.Control
             type="password"
             value={password}
@@ -83,7 +83,7 @@ const handleSubmit = async (e) => {
                   role="status"
                   aria-hidden="true"
                 />
-                <span className="ms-2">Loading...</span>
+                <span className="ms-2">Tegereza...</span>
               </>
             ) : (
               'Login'
@@ -91,11 +91,11 @@ const handleSubmit = async (e) => {
           </Button>
         </div>
 
-        <div className="mt-3 text-center">
+        {/* <div className="mt-3 text-center">
           <p>
             Don't have an account? <Link to="/register">Register here</Link>
           </p>
-        </div>
+        </div> */}
       </Form>
     </div>
   );

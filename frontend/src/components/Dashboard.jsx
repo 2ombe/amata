@@ -25,12 +25,12 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h2 className="mb-4">System Overview</h2>
+      <h2 className="mb-4">Amakuru Rusange</h2>
       <Row>
         <Col md={3}>
           <Card className="mb-4">
             <Card.Body>
-              <Card.Title>Total Farmers</Card.Title>
+              <Card.Title>Aborozi Bose</Card.Title>
               <Card.Text className="display-4">
                 {stats?.farmers || 0}
               </Card.Text>
@@ -40,7 +40,7 @@ const Dashboard = () => {
         <Col md={3}>
           <Card className="mb-4">
             <Card.Body>
-              <Card.Title>Today's Collections</Card.Title>
+              <Card.Title>Umusaruro Wumunsi</Card.Title>
               <Card.Text className="display-4">
                 {stats?.collections || 0}
               </Card.Text>
@@ -50,7 +50,7 @@ const Dashboard = () => {
         <Col md={3}>
           <Card className="mb-4">
             <Card.Body>
-              <Card.Title>Milk Collected (L)</Card.Title>
+              <Card.Title>Amata yakusanyijwe (L)</Card.Title>
               <Card.Text className="display-4">
                 {stats?.milkVolume || 0}
               </Card.Text>
@@ -60,7 +60,7 @@ const Dashboard = () => {
         <Col md={3}>
           <Card className="mb-4">
             <Card.Body>
-              <Card.Title>Spoilage Rate</Card.Title>
+              <Card.Title>Umusaruro Wangirika</Card.Title>
               <Card.Text className="display-4">
                 {stats?.spoilageRate ? `${stats.spoilageRate}%` : '0%'}
               </Card.Text>

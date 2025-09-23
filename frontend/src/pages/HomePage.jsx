@@ -30,27 +30,26 @@ const HomePage = () => {
     <Container fluid className="home-page">
       <Row>
         <Col>
-          <h1 className="page-title">MilkFlow Rwanda Dashboard</h1>
-          
+
           <div className="time-range-selector mb-4">
             <ButtonGroup>
               <Button 
                 variant={timeRange === 'day' ? 'primary' : 'outline-primary'}
                 onClick={() => setTimeRange('day')}
               >
-                Today
+                Uyu munsi
               </Button>
               <Button 
                 variant={timeRange === 'week' ? 'primary' : 'outline-primary'}
                 onClick={() => setTimeRange('week')}
               >
-                This Week
+                Icyi Cyumweru
               </Button>
               <Button 
                 variant={timeRange === 'month' ? 'primary' : 'outline-primary'}
                 onClick={() => setTimeRange('month')}
               >
-                This Month
+                Uku Kwezi
               </Button>
             </ButtonGroup>
           </div>

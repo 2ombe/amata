@@ -37,21 +37,21 @@ const CollectionDetailPage = () => {
 
   if (loading) return <Spinner animation="border" />;
   if (error) return <Alert variant="danger">{error}</Alert>;
-  if (!collection) return <Alert variant="info">Collection not found</Alert>;
+  if (!collection) return <Alert variant="info">Ntamakuru yumusaruro abonetse</Alert>;
 
   return (
     <Container fluid>
       <Row className="mb-4">
         <Col>
-          <h1>Collection #{collection.collectionId}</h1>
+          <h1>Nimero yumusaruro #{collection.collectionId}</h1>
           <div className="d-flex justify-content-between">
             <div>
               Status: {getStatusBadge(collection.status)}<br />
-              Center: {collection.center?.name}
+              Ikusanyirizo: {collection.center?.name}
             </div>
             <div>
-              <Button variant="secondary" className="mr-2">Edit</Button>
-              <Button variant="info">Print Report</Button>
+              <Button variant="secondary" className="mr-2">Vugurura Amakuru</Button>
+              <Button variant="info">Purintinga amakuru(Print)</Button>
             </div>
           </div>
         </Col>
@@ -60,7 +60,7 @@ const CollectionDetailPage = () => {
       <Row>
         <Col md={6}>
           <Card className="mb-4">
-            <Card.Header>Basic Information</Card.Header>
+            <Card.Header>Amakuru Yingenzi</Card.Header>
             <Card.Body>
               <p>
                 <strong>Planned Date:</strong> {new Date(collection.plannedDate).toLocaleString()}<br />
@@ -68,7 +68,7 @@ const CollectionDetailPage = () => {
                 <strong>Vehicle:</strong> {collection.vehicle?.plateNumber || 'Not assigned'}
               </p>
               <p>
-                <strong>Total Milk Collected:</strong> {collection.batches.reduce((sum, b) => sum + b.quantity, 0)}L<br />
+                <strong>Umusaruro wose:</strong> {collection.batches.reduce((sum, b) => sum + b.quantity, 0)}L<br />
                 <strong>Number of Batches:</strong> {collection.batches.length}
               </p>
             </Card.Body>
@@ -77,19 +77,19 @@ const CollectionDetailPage = () => {
         
         <Col md={6}>
           <Card className="mb-4">
-            <Card.Header>Quality Metrics</Card.Header>
+            <Card.Header>Ubwiza bwamata</Card.Header>
             <Card.Body>
               <p>
-                <strong>Avg. Fat Content:</strong> {(
+                <strong>Ingano yamavuta:</strong> {(
                   collection.batches.reduce((sum, b) => sum + b.quality.fatContent, 0) / collection.batches.length
                 ).toFixed(2)}%<br />
-                <strong>Avg. Temperature:</strong> {(
+                <strong>Ubushyuhe:</strong> {(
                   collection.batches.reduce((sum, b) => sum + b.quality.temperature, 0) / collection.batches.length
                 ).toFixed(2)}°C
               </p>
               {collection.cooling?.violations?.length > 0 && (
                 <Alert variant="warning">
-                  <strong>Cooling Violations:</strong> {collection.cooling.violations.length}
+                  <strong>Gukonjesha:</strong> {collection.cooling.violations.length}
                 </Alert>
               )}
             </Card.Body>
@@ -103,11 +103,11 @@ const CollectionDetailPage = () => {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Farmer</th>
-                <th>Quantity (L)</th>
-                <th>Fat Content</th>
-                <th>Temperature</th>
-                <th>Collection Time</th>
+                <th>Umworozi</th>
+                <th>Ubwiza (L)</th>
+                <th>Amavuta</th>
+                <th>Ubushyuhe</th>
+                <th>Igihe yakusanyirijwe</th>
               </tr>
             </thead>
             <tbody>
