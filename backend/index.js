@@ -14,8 +14,7 @@ const milkBatchRoutes = require('./routes/milkBatchRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
 const processingPlantRoutes = require('./routes/processingPlantRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
-const userRoutes = require('./routes/User');
-
+const userRoutes = require('./routes/User')
 const app = express();
 
 // Middleware
@@ -26,6 +25,7 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/milkflow', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  
 })
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
@@ -40,8 +40,7 @@ app.use('/api/batches', milkBatchRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/plants', processingPlantRoutes);
 app.use('/api/transactions', transactionRoutes);
-
-// Serve static files in production - CORRECTED VERSION
+// Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   // First, serve static files from the build directory
   app.use(express.static(path.join(__dirname, '../frontend/build')));
